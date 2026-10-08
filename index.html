@@ -5,12 +5,41 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
   <title>Morse · OmniNeti</title>
 
-  <!-- PWA Meta Tags & iOS Support -->
-  <meta name="theme-color" content="#2d2d44">
+  <!-- PWA Meta Tags -->
+  <meta name="theme-color" content="#1a1a24">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Morse Pro">
-  <meta name="description" content="Codificador y Decodificador de Código Morse en vivo OmniNeti Pro">
+  <meta name="apple-mobile-web-app-title" content="Morse OmniNeti">
+  <link rel="apple-touch-icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='100' fill='%231a1a24'/><text x='50%' y='55%' dominant-baseline='middle' text-anchor='middle' fill='%237d7dff' font-size='220' font-family='sans-serif' font-weight='bold'>··--</text></svg>">
+
+  <!-- Manifest PWA Incrustado -->
+  <link rel="manifest" id="pwa-manifest">
+  <script>
+    (function() {
+      const manifestData = {
+        "name": "Morse OmniNeti PRO ULTRA",
+        "short_name": "Morse OmniNeti",
+        "description": "Traductor y receptor de código Morse",
+        "start_url": "./",
+        "display": "standalone",
+        "background_color": "#1a1a24",
+        "theme_color": "#1a1a24",
+        "icons": [
+          {
+            "src": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='100' fill='%231a1a24'/><text x='50%' y='55%' dominant-baseline='middle' text-anchor='middle' fill='%237d7dff' font-size='220' font-family='sans-serif' font-weight='bold'>··--</text></svg>",
+            "sizes": "192x192 512x512",
+            "type": "image/svg+xml",
+            "purpose": "any maskable"
+          }
+        ]
+      };
+      const stringManifest = JSON.stringify(manifestData);
+      const blob = new Blob([stringManifest], { type: 'application/json' });
+      const manifestURL = URL.createObjectURL(blob);
+      document.getElementById('pwa-manifest').setAttribute('href', manifestURL);
+    })();
+  </script>
 
   <style>
     * {
@@ -202,18 +231,9 @@
     .btn-warning {
       background: #b17d3a;
     }
-    .btn-install {
-      background: #4a4ae6;
-      color: white;
-      display: none;
-    }
     .btn-sm {
       padding: 0.35rem 0.9rem;
       font-size: 0.8rem;
-    }
-    .btn-lg {
-      padding: 0.6rem 1.8rem;
-      font-size: 1.1rem;
     }
 
     .flex-wrap {
@@ -351,56 +371,6 @@
       overflow-y: auto;
     }
 
-    .manual-letter {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 0.4rem 0.6rem;
-      background: #fff;
-      border-radius: 12px;
-      border: 2px solid #ddd;
-      min-width: 50px;
-      transition: all 0.3s;
-    }
-    body.dark .manual-letter {
-      background: #2a2a3a;
-      border-color: #4a4a5a;
-    }
-    .manual-letter .letter-char {
-      font-size: 1.4rem;
-      font-weight: 600;
-    }
-    .manual-letter .letter-code {
-      font-size: 0.75rem;
-      font-family: 'Courier New', monospace;
-      letter-spacing: 1px;
-      opacity: 0.7;
-    }
-    .manual-letter .highlight-dot {
-      color: #2d7d4a;
-      font-weight: bold;
-    }
-    .manual-letter .highlight-dash {
-      color: #b17d3a;
-      font-weight: bold;
-    }
-    .manual-letter .highlight-dim {
-      opacity: 0.3;
-    }
-    .manual-letter.current {
-      border-color: #7d7dff;
-      background: #e8e8ff;
-      transform: scale(1.05);
-    }
-    body.dark .manual-letter.current {
-      border-color: #7d7dff;
-      background: #2a2a5a;
-    }
-    .manual-letter.done {
-      border-color: #4a9a6a;
-      opacity: 0.8;
-    }
-
     .manual-controls {
       display: flex;
       flex-wrap: wrap;
@@ -426,8 +396,6 @@
       .card { padding: 0.9rem 1rem; }
       .morse-grid { grid-template-columns: repeat(auto-fill, minmax(44px, 1fr)); }
       .btn { font-size: 0.8rem; padding: 0.5rem 0.9rem; }
-      .manual-letter { min-width: 40px; padding: 0.3rem 0.4rem; }
-      .manual-letter .letter-char { font-size: 1.1rem; }
       .morse-current-box { min-width: 60px; min-height: 60px; }
       .morse-current-box .letter-display { font-size: 1.6rem; }
       .manual-top-row { flex-direction: column; }
@@ -632,9 +600,6 @@
       transform: scale(1.08);
       border-color: #7d7dff;
     }
-    .color-swatch.selected {
-      border-color: #2d2d44;
-    }
     .modal-close {
       text-align: right;
     }
@@ -645,10 +610,6 @@
       cursor: pointer;
       opacity: 0.6;
     }
-    .modal-close button:hover {
-      opacity: 1;
-    }
-
     .manual-top-row {
       display: flex;
       flex-wrap: wrap;
@@ -674,27 +635,11 @@
       .manual-top-row { flex-direction: column; }
     }
 
-    @media (max-width: 380px) {
-      .decoder-grid { grid-template-columns: repeat(2, 1fr); }
-      #waveformCanvas { height: 92px; }
-      .color-grid { grid-template-columns: repeat(4, 1fr); }
-    }
-
     .audio-controls {
       display: flex;
       flex-wrap: wrap;
       gap: 0.5rem;
       align-items: center;
-    }
-
-    .receive-status {
-      font-size: 0.85rem;
-      padding: 0.2rem 0.8rem;
-      border-radius: 40px;
-      background: #e0e0e0;
-    }
-    body.dark .receive-status {
-      background: #3a3a4a;
     }
 
     .manual-placeholder {
@@ -726,17 +671,6 @@
     body.dark .security-badge {
       background: #2a7a4a;
     }
-
-    .decoded-msg-display {
-      background: #e8f5e9;
-      padding: 0.3rem 0.8rem;
-      border-radius: 20px;
-      font-size: 0.8rem;
-      display: inline-block;
-    }
-    body.dark .decoded-msg-display {
-      background: #1a3a2a;
-    }
   </style>
 </head>
 <body>
@@ -745,7 +679,6 @@
   <div class="top-bar">
     <h1>· Morse <small>OmniNeti</small></h1>
     <div class="controls">
-      <button class="btn btn-install btn-sm" id="installBtn">📲 instalar App</button>
       <button class="btn btn-outline btn-sm" id="themeToggle">🌓 oscuro</button>
       <button class="btn btn-outline btn-sm" id="bgConfigBtn">🖌️ fondo</button>
       <button class="btn btn-outline btn-sm" id="fgConfigBtn">✏️ texto</button>
@@ -850,3 +783,1111 @@
           <input type="range" id="manualWpm" min="5" max="40" value="12">
           <span id="manualWpmValue">12</span>
         </label>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    design Felipe Aguilera Gómez by OmniNeti · copyright 2026
+  </footer>
+</div>
+
+<div class="color-modal" id="colorModal">
+  <div class="color-modal-content">
+    <div class="modal-close">
+      <button id="closeColorModal">✕</button>
+    </div>
+    <h3 style="text-align:center;margin-bottom:0.5rem;">Selecciona un color</h3>
+    <div class="color-grid" id="colorGrid"></div>
+    <div style="text-align:center;margin-top:0.5rem;">
+      <button class="btn btn-sm btn-outline" id="customColorBtn">🎨 Personalizado</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Service Worker
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      const swCode = `
+        const CACHE_NAME = 'morse-omnineti-v1';
+        self.addEventListener('install', (e) => { self.skipWaiting(); });
+        self.addEventListener('activate', (e) => { e.waitUntil(clients.claim()); });
+        self.addEventListener('fetch', (e) => {
+          e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
+        });
+      `;
+      const blob = new Blob([swCode], { type: 'text/javascript' });
+      const swUrl = URL.createObjectURL(blob);
+      navigator.serviceWorker.register(swUrl).catch(err => console.log('SW error:', err));
+    });
+  }
+
+  (function() {
+    const basicColors = [
+      '#000000', '#FFFFFF', '#FF0000', '#FF6B6B', '#FF9F43',
+      '#FECA57', '#48DBFB', '#0ABDE3', '#10AC84', '#5F27CD',
+      '#FF6FB7', '#FF4757', '#FFA502', '#2ED573', '#1E90FF',
+      '#A29BFE', '#FD79A8', '#00CEC9', '#6C5CE7', '#FDCB6E',
+      '#E17055', '#00B894', '#0984E3'
+    ];
+
+    const morseMap = {
+      'A': '.-', 'B': '-...', 'C': '-.-.', 'D': '-..', 'E': '.', 'F': '..-.',
+      'G': '--.', 'H': '....', 'I': '..', 'J': '.---', 'K': '-.-', 'L': '.-..',
+      'M': '--', 'N': '-.', 'O': '---', 'P': '.--.', 'Q': '--.-', 'R': '.-.',
+      'S': '...', 'T': '-', 'U': '..-', 'V': '...-', 'W': '.--', 'X': '-..-',
+      'Y': '-.--', 'Z': '--..',
+      '0': '-----', '1': '.----', '2': '..---', '3': '...--', '4': '....-',
+      '5': '.....', '6': '-....', '7': '--...', '8': '---..', '9': '----.',
+      ' ': ' '
+    };
+
+    const reverseMorse = {};
+    for (let [k, v] of Object.entries(morseMap)) {
+      if (v !== ' ') reverseMorse[v] = k;
+    }
+
+    // DOM Elements
+    const morseGrid = document.getElementById('morseGrid');
+    const messageInput = document.getElementById('messageInput');
+    const sendAutoBtn = document.getElementById('sendAutoBtn');
+    const sendManualBtn = document.getElementById('sendManualBtn');
+    const playBtn = document.getElementById('playBtn');
+    const stopBtn = document.getElementById('stopBtn');
+    const saveBtn = document.getElementById('saveBtn');
+    const receiveBtn = document.getElementById('receiveBtn');
+    const fileInput = document.getElementById('fileInput');
+    const statusBadge = document.getElementById('statusBadge');
+    const themeToggle = document.getElementById('themeToggle');
+    const bgConfigBtn = document.getElementById('bgConfigBtn');
+    const fgConfigBtn = document.getElementById('fgConfigBtn');
+    const resetConfigBtn = document.getElementById('resetConfigBtn');
+    const micBtn = document.getElementById('micBtn');
+    const liveStopBtn = document.getElementById('liveStopBtn');
+    const clearRxBtn = document.getElementById('clearRxBtn');
+    const selfTestBtn = document.getElementById('selfTestBtn');
+    const rxModeBadge = document.getElementById('rxModeBadge');
+    const liveDot = document.getElementById('liveDot');
+    const waveformCanvas = document.getElementById('waveformCanvas');
+    const signalMeterFill = document.getElementById('signalMeterFill');
+    const signalText = document.getElementById('signalText');
+    const rxCurrent = document.getElementById('rxCurrent');
+    const rxMessage = document.getElementById('rxMessage');
+    const wpmValue = document.getElementById('wpmValue');
+    const unitValue = document.getElementById('unitValue');
+    const toneValue = document.getElementById('toneValue');
+    const confidenceValue = document.getElementById('confidenceValue');
+    const thresholdRange = document.getElementById('thresholdRange');
+    const filterSelect = document.getElementById('filterSelect');
+    const speedMode = document.getElementById('speedMode');
+    const manualWpmWrap = document.getElementById('manualWpmWrap');
+    const manualWpm = document.getElementById('manualWpm');
+    const manualWpmValue = document.getElementById('manualWpmValue');
+    const canvasCtx = waveformCanvas.getContext('2d');
+
+    // Panel manual
+    const manualPanel = document.getElementById('manualPanel');
+    const manualWritingArea = document.getElementById('manualWritingArea');
+    const morseLetterDisplay = document.getElementById('morseLetterDisplay');
+    const morseCodeDisplay = document.getElementById('morseCodeDisplay');
+    const manualMessageDisplay = document.getElementById('manualMessageDisplay');
+    const dotBtn = document.getElementById('dotBtn');
+    const dashBtn = document.getElementById('dashBtn');
+    const completeLetterBtn = document.getElementById('completeLetterBtn');
+    const resetLetterBtn = document.getElementById('resetLetterBtn');
+    const clearMessageBtn = document.getElementById('clearMessageBtn');
+    const manualStatus = document.getElementById('manualStatus');
+
+    // Modal de colores
+    const colorModal = document.getElementById('colorModal');
+    const colorGrid = document.getElementById('colorGrid');
+    const closeColorModal = document.getElementById('closeColorModal');
+    const customColorBtn = document.getElementById('customColorBtn');
+
+    // Estados
+    let isDark = false;
+    let audioContext = null;
+    let isPlaying = false;
+    let currentTimeout = null;
+    let audioBuffer = null;
+    let receivedAudioBuffer = null;
+
+    let manualModeActive = false;
+    let currentManualCode = '';
+    let manualMessage = '';
+    let currentLetterIndex = 0;
+    let originalMessage = '';
+    let autoModeActive = false;
+    let autoLetterIndex = 0;
+    let autoCurrentCode = '';
+    let autoMessageChars = [];
+
+    let isReceiving = false;
+    let rxStream = null;
+    let rxSource = null;
+    let rxAnalyser = null;
+    let rxAnimation = null;
+    let rxLastOn = false;
+    let rxStateStarted = 0;
+    let rxCurrentCode = '';
+    let rxDecoded = '';
+    let rxUnit = 100;
+    let rxToneDurations = [];
+    let rxGapDurations = [];
+    let rxNoiseFloor = 0;
+    let rxCalibrationSamples = [];
+
+    function renderMorse() {
+      morseGrid.innerHTML = '';
+      const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+      for (let ch of letters) {
+        const div = document.createElement('div');
+        div.className = 'morse-char';
+        div.innerHTML = `<span>${ch}</span><span class="code">${morseMap[ch] || ''}</span>`;
+        morseGrid.appendChild(div);
+      }
+    }
+    renderMorse();
+
+    function playTone(duration) {
+      if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioContext.state === 'suspended') audioContext.resume();
+      const osc = audioContext.createOscillator();
+      const gain = audioContext.createGain();
+      osc.frequency.value = 750;
+      gain.gain.value = 0.3;
+      osc.connect(gain);
+      gain.connect(audioContext.destination);
+      osc.start(0);
+      osc.stop(audioContext.currentTime + duration);
+    }
+
+    function generateMorseAudio(message, callback) {
+      const clean = (message || '').toUpperCase().replace(/[^A-Z0-9 ]/g, '');
+      if (!clean) { callback(null); return; }
+      if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+      const unit = 0.1;
+      const freq = 700;
+      const sampleRate = 8000;
+      let totalUnits = 0;
+
+      for (let i = 0; i < clean.length; i++) {
+        const ch = clean[i];
+        if (ch === ' ') { totalUnits += 4; continue; }
+        const code = morseMap[ch];
+        if (!code) continue;
+        for (let j = 0; j < code.length; j++) {
+          totalUnits += code[j] === '.' ? 1 : 3;
+          if (j < code.length - 1) totalUnits += 1;
+        }
+        if (i < clean.length - 1) totalUnits += 3;
+      }
+
+      const length = Math.ceil(totalUnits * unit * sampleRate + sampleRate);
+      const buffer = audioContext.createBuffer(1, length, sampleRate);
+      const data = buffer.getChannelData(0);
+      let offset = 0;
+
+      const append = (units, tone = false) => {
+        const samples = Math.round(units * unit * sampleRate);
+        for (let i = 0; i < samples && offset + i < data.length; i++) {
+          data[offset + i] = tone ? Math.sin(2 * Math.PI * freq * (offset + i) / sampleRate) * 0.5 : 0;
+        }
+        offset += samples;
+      };
+
+      for (let i = 0; i < clean.length; i++) {
+        const ch = clean[i];
+        if (ch === ' ') { append(4, false); continue; }
+        const code = morseMap[ch];
+        if (!code) continue;
+        for (let j = 0; j < code.length; j++) {
+          append(code[j] === '.' ? 1 : 3, true);
+          if (j < code.length - 1) append(1, false);
+        }
+        if (i < clean.length - 1) append(3, false);
+      }
+
+      callback(buffer);
+    }
+
+    let currentSource = null;
+
+    async function playBuffer(buffer) {
+      stopAudio();
+      if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioContext.state === 'suspended') { try { await audioContext.resume(); } catch(e) {} }
+      const source = audioContext.createBufferSource();
+      source.buffer = buffer;
+      source.connect(audioContext.destination);
+      source.start(0);
+      currentSource = source;
+      isPlaying = true;
+      statusBadge.textContent = '▶ reproduciendo';
+      source.onended = () => { isPlaying = false; statusBadge.textContent = 'listo'; currentSource = null; };
+    }
+
+    function stopAudio() {
+      if (isReceiving) stopMicrophoneReceiver();
+      if (currentSource) {
+        try { currentSource.stop(); } catch(e) {}
+        currentSource = null;
+      }
+      isPlaying = false;
+      if (currentTimeout) { clearTimeout(currentTimeout); currentTimeout = null; }
+      statusBadge.textContent = receivedAudioBuffer ? 'audio cargado · pulsa escuchar' : '⏹ detenido';
+    }
+
+    function highlightMorseCode(code, highlightIndex) {
+      if (!code) return '<span class="empty-hint">· · ·</span>';
+      let result = '';
+      for (let i = 0; i < code.length; i++) {
+        const sym = code[i];
+        const isHighlighted = (i === highlightIndex);
+        const className = isHighlighted ? (sym === '.' ? 'highlight-dot' : 'highlight-dash') : 'highlight-dim';
+        const display = sym === '.' ? '·' : '—';
+        result += `<span class="${className}">${display}</span>`;
+      }
+      return result;
+    }
+
+    function startAutoMode() {
+      const msg = messageInput.value.trim();
+      if (!msg) { statusBadge.textContent = '⚠️ escribe un mensaje primero'; return; }
+      if (manualModeActive) exitManualMode();
+
+      stopAudio();
+      originalMessage = msg.toUpperCase();
+      autoMessageChars = originalMessage.split('');
+      autoLetterIndex = 0;
+      autoCurrentCode = '';
+      autoModeActive = true;
+      
+      manualPanel.style.display = 'flex';
+      sendManualBtn.textContent = '📟 manual';
+      updateAutoDisplay();
+      manualStatus.textContent = 'modo automático';
+      statusBadge.textContent = `codificando: ${originalMessage}`;
+      setTimeout(() => processAutoLetter(), 300);
+    }
+
+    function processAutoLetter() {
+      if (!autoModeActive || autoLetterIndex >= autoMessageChars.length) {
+        autoModeActive = false;
+        manualStatus.textContent = '✅ codificación completada';
+        statusBadge.textContent = 'mensaje codificado';
+        return;
+      }
+
+      const letter = autoMessageChars[autoLetterIndex];
+      if (letter === ' ') {
+        autoLetterIndex++;
+        updateAutoDisplay();
+        setTimeout(() => processAutoLetter(), 500);
+        return;
+      }
+
+      const code = morseMap[letter];
+      if (!code) {
+        autoLetterIndex++;
+        updateAutoDisplay();
+        setTimeout(() => processAutoLetter(), 300);
+        return;
+      }
+
+      autoCurrentCode = '';
+      let symIndex = 0;
+      
+      function playNextSymbol() {
+        if (!autoModeActive || symIndex >= code.length) {
+          autoLetterIndex++;
+          updateAutoDisplay();
+          setTimeout(() => processAutoLetter(), 400);
+          return;
+        }
+
+        const sym = code[symIndex];
+        autoCurrentCode += sym;
+        playTone(sym === '.' ? 0.1 : 0.3);
+        updateAutoDisplay(symIndex);
+        symIndex++;
+        setTimeout(playNextSymbol, 300);
+      }
+
+      playNextSymbol();
+    }
+
+    function updateAutoDisplay(highlightIndex) {
+      manualWritingArea.innerHTML = '';
+      for (let i = 0; i < autoLetterIndex && i < autoMessageChars.length; i++) {
+        const span = document.createElement('span');
+        span.className = 'char-display done';
+        span.textContent = autoMessageChars[i] === ' ' ? '␣' : autoMessageChars[i];
+        manualWritingArea.appendChild(span);
+      }
+      
+      if (autoLetterIndex < autoMessageChars.length) {
+        const currentChar = autoMessageChars[autoLetterIndex];
+        if (currentChar !== ' ') {
+          const span = document.createElement('span');
+          span.className = 'char-display current';
+          span.textContent = currentChar;
+          manualWritingArea.appendChild(span);
+        }
+      }
+      
+      for (let i = autoLetterIndex + 1; i < autoMessageChars.length; i++) {
+        const span = document.createElement('span');
+        span.className = 'char-display pending';
+        span.textContent = autoMessageChars[i] === ' ' ? '␣' : autoMessageChars[i];
+        manualWritingArea.appendChild(span);
+      }
+      
+      if (autoLetterIndex < autoMessageChars.length) {
+        const currentChar = autoMessageChars[autoLetterIndex];
+        if (currentChar !== ' ') {
+          morseLetterDisplay.textContent = currentChar;
+          const code = morseMap[currentChar] || '';
+          const highlightIdx = (highlightIndex !== undefined && highlightIndex < code.length) ? highlightIndex : autoCurrentCode.length - 1;
+          morseCodeDisplay.innerHTML = highlightMorseCode(code, autoCurrentCode ? highlightIdx : -1);
+        } else {
+          morseLetterDisplay.textContent = '␣';
+          morseCodeDisplay.innerHTML = '<span class="empty-hint">espacio</span>';
+        }
+      } else {
+        morseLetterDisplay.textContent = '✓';
+        morseCodeDisplay.innerHTML = '<span class="empty-hint">completado</span>';
+      }
+    }
+
+    function startManualMode() {
+      const msg = messageInput.value.trim();
+      if (!msg) { statusBadge.textContent = '⚠️ escribe un mensaje primero'; return; }
+      if (autoModeActive) autoModeActive = false;
+
+      stopAudio();
+      manualModeActive = true;
+      originalMessage = msg.toUpperCase();
+      manualMessage = '';
+      currentLetterIndex = 0;
+      currentManualCode = '';
+      
+      manualPanel.style.display = 'flex';
+      sendManualBtn.textContent = '📟 salir manual';
+      updateManualDisplay();
+      manualStatus.textContent = 'construyendo';
+      statusBadge.textContent = 'modo manual';
+    }
+
+    function exitManualMode() {
+      manualModeActive = false;
+      autoModeActive = false;
+      manualPanel.style.display = 'none';
+      sendManualBtn.textContent = '📟 manual';
+      statusBadge.textContent = 'listo';
+      manualStatus.textContent = '';
+      if (manualMessage) {
+        messageInput.value = manualMessage;
+        if (audioContext) {
+          generateMorseAudio(manualMessage, (buffer) => { if (buffer) audioBuffer = buffer; });
+        }
+      }
+    }
+
+    function updateManualDisplay() {
+      manualWritingArea.innerHTML = '';
+      const fullMessage = originalMessage || '';
+      for (let i = 0; i < fullMessage.length; i++) {
+        const char = fullMessage[i];
+        const span = document.createElement('span');
+        if (i < currentLetterIndex) span.className = 'char-display done';
+        else if (i === currentLetterIndex) span.className = 'char-display current';
+        else span.className = 'char-display pending';
+        span.textContent = char === ' ' ? '␣' : char;
+        manualWritingArea.appendChild(span);
+      }
+      
+      if (currentLetterIndex < fullMessage.length) {
+        const currentChar = fullMessage[currentLetterIndex];
+        if (currentChar !== ' ') {
+          morseLetterDisplay.textContent = currentChar;
+          const code = morseMap[currentChar] || '';
+          morseCodeDisplay.innerHTML = highlightMorseCode(code, currentManualCode ? currentManualCode.length - 1 : -1);
+        } else {
+          morseLetterDisplay.textContent = '␣';
+          morseCodeDisplay.innerHTML = '<span class="empty-hint">espacio</span>';
+        }
+      } else {
+        morseLetterDisplay.textContent = '✓';
+        morseCodeDisplay.innerHTML = '<span class="empty-hint">completado</span>';
+      }
+    }
+
+    function addSymbol(sym) {
+      if (!manualModeActive) return;
+      const fullMessage = originalMessage || '';
+      if (currentLetterIndex >= fullMessage.length) return;
+      const currentChar = fullMessage[currentLetterIndex];
+      if (currentChar === ' ') return;
+      
+      currentManualCode += sym;
+      playTone(sym === '.' ? 0.1 : 0.3);
+      updateManualDisplay();
+    }
+
+    function completeLetter() {
+      if (!manualModeActive) return;
+      const fullMessage = originalMessage || '';
+      if (currentLetterIndex >= fullMessage.length) return;
+      
+      const currentChar = fullMessage[currentLetterIndex];
+      if (currentChar === ' ') {
+        currentLetterIndex++;
+        currentManualCode = '';
+        updateManualDisplay();
+        return;
+      }
+      
+      if (!currentManualCode) return;
+      const expectedCode = morseMap[currentChar];
+      if (currentManualCode !== expectedCode) {
+        manualStatus.textContent = `⚠️ código incorrecto (esperaba: ${expectedCode})`;
+        return;
+      }
+      
+      manualMessage += currentChar;
+      currentLetterIndex++;
+      currentManualCode = '';
+      updateManualDisplay();
+      
+      if (audioContext) {
+        generateMorseAudio(manualMessage, (buffer) => { if (buffer) audioBuffer = buffer; });
+      }
+    }
+
+    function resetCurrentLetter() {
+      if (!manualModeActive) return;
+      currentManualCode = '';
+      updateManualDisplay();
+    }
+
+    function clearAllMessages() {
+      manualModeActive = false;
+      autoModeActive = false;
+      manualMessage = '';
+      currentLetterIndex = 0;
+      currentManualCode = '';
+      autoLetterIndex = 0;
+      autoCurrentCode = '';
+      autoMessageChars = [];
+      originalMessage = '';
+      
+      messageInput.value = '';
+      manualWritingArea.innerHTML = '<span class="manual-placeholder">Escribe tu mensaje letra por letra...</span>';
+      morseLetterDisplay.textContent = '_';
+      morseCodeDisplay.innerHTML = '<span class="empty-hint">· · ·</span>';
+      manualMessageDisplay.innerHTML = '';
+      manualStatus.textContent = 'limpiado';
+      statusBadge.textContent = 'todo limpiado';
+      audioBuffer = null;
+    }
+
+    // Recepción y análisis de Audio
+    async function receiveAudio(file) {
+      try {
+        if (!file) return;
+        statusBadge.textContent = '📂 cargando y analizando...';
+        rxMessage.textContent = 'Procesando audio...';
+        rxCurrent.textContent = '···';
+        messageInput.value = '';
+        rxDecoded = '';
+
+        if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioContext.state === 'suspended') await audioContext.resume();
+
+        const arrayBuffer = await file.arrayBuffer();
+        receivedAudioBuffer = await audioContext.decodeAudioData(arrayBuffer.slice(0));
+        audioBuffer = receivedAudioBuffer;
+
+        statusBadge.textContent = '🔎 analizando Morse...';
+        const result = analyzeAudioBuffer(receivedAudioBuffer, false);
+
+        if (result && result.text) {
+          showDecodedProgressively(result.letters, result.gaps);
+        } else {
+          rxMessage.textContent = 'No se pudo detectar código Morse claro en el archivo.';
+          statusBadge.textContent = '⚠️ no se detectó código Morse';
+        }
+      } catch (err) {
+        console.error('Error procesando audio:', err);
+        statusBadge.textContent = '❌ error al procesar audio';
+      }
+    }
+
+    function buildAudioStates(buffer, thresholdPct, smoothMs) {
+      const channelCount = buffer.numberOfChannels;
+      const length = buffer.length;
+      const sampleRate = buffer.sampleRate;
+      const mono = new Float32Array(length);
+
+      for (let ch = 0; ch < channelCount; ch++) {
+        const channel = buffer.getChannelData(ch);
+        for (let i = 0; i < length; i++) mono[i] += channel[i] / channelCount;
+      }
+
+      const windowSize = Math.max(8, Math.floor(sampleRate * smoothMs / 1000));
+      const envelope = [];
+      let maxEnergy = 0;
+
+      for (let pos = 0; pos < length; pos += windowSize) {
+        const end = Math.min(pos + windowSize, length);
+        let sum = 0;
+        for (let i = pos; i < end; i++) sum += mono[i] * mono[i];
+        const rms = Math.sqrt(sum / Math.max(1, end - pos));
+        envelope.push(rms);
+        if (rms > maxEnergy) maxEnergy = rms;
+      }
+      if (maxEnergy < 1e-6) return [];
+
+      const threshold = Math.max(maxEnergy * thresholdPct / 100, maxEnergy * 0.01);
+      const states = [];
+      let state = envelope[0] > threshold;
+      let run = 1;
+
+      for (let i = 1; i < envelope.length; i++) {
+        const on = envelope[i] > threshold;
+        if (on === state) run++;
+        else {
+          states.push({ on: state, ms: run * windowSize * 1000 / sampleRate });
+          state = on;
+          run = 1;
+        }
+      }
+      states.push({ on: state, ms: run * windowSize * 1000 / sampleRate });
+
+      while (states.length && !states[0].on) states.shift();
+      while (states.length && !states[states.length - 1].on) states.pop();
+
+      const merged = [];
+      for (const st of states) {
+        if (!merged.length || merged[merged.length - 1].on !== st.on) merged.push({...st});
+        else merged[merged.length - 1].ms += st.ms;
+      }
+      return merged;
+    }
+
+    function decodeAudioStates(states) {
+      if (!states || !states.length) return null;
+      const tones = states.filter(s => s.on).map(s => s.ms).filter(ms => ms >= 20);
+      if (!tones.length) return null;
+
+      const sorted = [...tones].sort((a,b) => a-b);
+      const shortCount = Math.max(1, Math.ceil(sorted.length * 0.30));
+      const short = sorted.slice(0, shortCount);
+      let unit = short[Math.floor(short.length / 2)];
+      if (!unit || unit < 20 || unit > 700) return null;
+
+      let code = '';
+      let text = '';
+      const letters = [];
+      const gaps = [];
+      let confidenceHits = 0;
+      let confidenceTotal = 0;
+
+      for (const st of states) {
+        if (st.on) {
+          const ratio = st.ms / unit;
+          code += ratio >= 2.05 ? '-' : '.';
+        } else {
+          const ratio = st.ms / unit;
+          if (!code) continue;
+
+          if (ratio >= 5.0) {
+            const letter = reverseMorse[code];
+            if (letter) { text += letter; confidenceHits++; }
+            confidenceTotal++;
+            letters.push(letter || '?');
+            gaps.push('word');
+            text += ' ';
+            code = '';
+          } else if (ratio >= 2.0) {
+            const letter = reverseMorse[code];
+            if (letter) { text += letter; confidenceHits++; }
+            confidenceTotal++;
+            letters.push(letter || '?');
+            gaps.push('letter');
+            code = '';
+          }
+        }
+      }
+
+      if (code) {
+        const letter = reverseMorse[code];
+        if (letter) { text += letter; confidenceHits++; }
+        confidenceTotal++;
+        letters.push(letter || '?');
+        gaps.push('end');
+      }
+
+      text = text.replace(/\s+/g, ' ').trim();
+      const confidence = confidenceTotal ? Math.round(confidenceHits / confidenceTotal * 100) : 0;
+      if (!text || !/[A-Z0-9]/.test(text)) return null;
+      return { text, letters, gaps, unit, confidence };
+    }
+
+    function analyzeAudioBuffer(buffer, showResult = true) {
+      if (!buffer) return null;
+      let best = null;
+      const thresholds = [5, 8, 10, 12, 15, 18, 22, 26, 30, 35, 40];
+      const smoothings = [3, 5, 7, 10, 14];
+
+      for (const threshold of thresholds) {
+        for (const smooth of smoothings) {
+          const states = buildAudioStates(buffer, threshold, smooth);
+          const candidate = decodeAudioStates(states);
+          if (!candidate) continue;
+
+          const invalidMatches = candidate.text.match(/\?/g);
+          const invalid = invalidMatches ? invalidMatches.length : 0;
+          const score = candidate.confidence * 10 + Math.min(candidate.text.length, 80) - invalid * 80;
+          if (!best || score > best.score) best = {...candidate, score};
+        }
+      }
+
+      if (showResult && best) {
+        rxDecoded = '';
+        rxMessage.textContent = '';
+        rxCurrent.textContent = '· · ·';
+        showDecodedProgressively(best.letters, best.gaps);
+        unitValue.textContent = Math.round(best.unit);
+        wpmValue.textContent = Math.max(1, Math.min(99, Math.round(1200 / best.unit)));
+        confidenceValue.textContent = best.confidence + '%';
+        statusBadge.textContent = `✅ decodificado: ${best.text} (${best.confidence}% confianza)`;
+      }
+      return best;
+    }
+
+    function showDecodedProgressively(letters, gaps) {
+      if (currentTimeout) { clearTimeout(currentTimeout); currentTimeout = null; }
+      rxDecoded = '';
+      let i = 0;
+
+      const tick = () => {
+        if (i >= letters.length) {
+          messageInput.value = rxDecoded;
+          rxMessage.textContent = rxDecoded;
+          rxCurrent.textContent = '✓ fin';
+          statusBadge.textContent = `✅ RX: ${rxDecoded}`;
+          return;
+        }
+
+        const ch = letters[i];
+        const code = morseMap[ch] || '';
+
+        if (ch === ' ') {
+          rxDecoded += ' ';
+          rxCurrent.textContent = '␠ espacio';
+        } else {
+          rxDecoded += ch;
+          rxCurrent.textContent = code || '⚠️';
+        }
+
+        messageInput.value = rxDecoded;
+        rxMessage.textContent = rxDecoded;
+        statusBadge.textContent = `📡 RX letra ${i + 1}/${letters.length}: ${ch === ' ' ? 'ESPACIO' : ch}`;
+
+        i++;
+        currentTimeout = setTimeout(tick, 220);
+      };
+      tick();
+    }
+
+    async function startMicrophoneReceiver() {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        statusBadge.textContent = 'micrófono no disponible';
+        return;
+      }
+
+      try {
+        stopMicrophoneReceiver();
+        rxStream = await navigator.mediaDevices.getUserMedia({
+          audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false, channelCount: 1 }
+        });
+
+        if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioContext.state === 'suspended') await audioContext.resume();
+
+        rxSource = audioContext.createMediaStreamSource(rxStream);
+        rxAnalyser = audioContext.createAnalyser();
+        rxAnalyser.fftSize = 2048;
+        rxAnalyser.smoothingTimeConstant = 0.15;
+        rxSource.connect(rxAnalyser);
+
+        isReceiving = true;
+        rxDecoded = '';
+        rxCurrentCode = '';
+        rxLastOn = false;
+        rxCalibrationSamples = [];
+        rxModeBadge.innerHTML = '<span class="live-dot active"></span>RX micrófono';
+        liveDot.classList.add('active');
+        micBtn.disabled = true;
+        liveStopBtn.disabled = false;
+        statusBadge.textContent = '🎙️ escuchando Morse...';
+        rxMessage.textContent = '';
+        rxCurrent.textContent = '···';
+        drawLiveWaveform();
+      } catch (err) {
+        console.error(err);
+        statusBadge.textContent = 'permiso de micrófono denegado';
+        rxModeBadge.innerHTML = '<span class="live-dot"></span>sin micrófono';
+      }
+    }
+
+    function stopMicrophoneReceiver() {
+      isReceiving = false;
+      if (rxAnimation) { cancelAnimationFrame(rxAnimation); rxAnimation = null; }
+      if (rxSource) { try { rxSource.disconnect(); } catch(e) {} rxSource = null; }
+      if (rxAnalyser) { try { rxAnalyser.disconnect(); } catch(e) {} rxAnalyser = null; }
+      if (rxStream) { rxStream.getTracks().forEach(track => track.stop()); rxStream = null; }
+
+      micBtn.disabled = false;
+      liveStopBtn.disabled = true;
+      liveDot.classList.remove('active');
+      rxModeBadge.innerHTML = '<span class="live-dot"></span>detenido';
+
+      if (rxDecoded) {
+        messageInput.value = rxDecoded;
+        rxMessage.textContent = rxDecoded;
+        statusBadge.textContent = `✅ RX finalizado: ${rxDecoded}`;
+      } else {
+        statusBadge.textContent = '⏹ RX detenido';
+      }
+    }
+
+    function drawLiveWaveform() {
+      if (!isReceiving || !rxAnalyser) return;
+
+      const data = new Uint8Array(rxAnalyser.fftSize);
+      rxAnalyser.getByteTimeDomainData(data);
+
+      canvasCtx.clearRect(0, 0, waveformCanvas.width, waveformCanvas.height);
+      canvasCtx.beginPath();
+
+      const mid = waveformCanvas.height / 2;
+      for (let i = 0; i < data.length; i++) {
+        const x = i / (data.length - 1) * waveformCanvas.width;
+        const y = mid + (data[i] - 128) * 0.7;
+        if (i === 0) canvasCtx.moveTo(x, y);
+        else canvasCtx.lineTo(x, y);
+      }
+      canvasCtx.strokeStyle = '#7d7dff';
+      canvasCtx.lineWidth = 2;
+      canvasCtx.stroke();
+
+      let sum = 0;
+      for (let i = 0; i < data.length; i++) {
+        const v = (data[i] - 128) / 128;
+        sum += v * v;
+      }
+      const rms = Math.sqrt(sum / data.length);
+      const percent = Math.min(100, Math.round(rms * 350));
+      signalMeterFill.style.width = percent + '%';
+      signalText.textContent = `señal ${percent}%`;
+
+      processLiveSignal(rms);
+      rxAnimation = requestAnimationFrame(drawLiveWaveform);
+    }
+
+    function processLiveSignal(rms) {
+      const now = performance.now();
+      const userThreshold = Number(thresholdRange.value) / 100;
+      const dynamicThreshold = Math.max(0.012, userThreshold * Math.max(0.04, rxNoiseFloor * 2));
+      const on = rms > dynamicThreshold;
+
+      if (!on) {
+        rxNoiseFloor = rxNoiseFloor === 0 ? rms : rxNoiseFloor * 0.96 + rms * 0.04;
+      }
+
+      if (on !== rxLastOn) {
+        const duration = rxStateStarted ? now - rxStateStarted : 0;
+        if (rxLastOn && duration > 20) {
+          registerLiveTone(duration);
+        } else if (!rxLastOn && duration > 20) {
+          registerLiveGap(duration);
+        }
+        rxLastOn = on;
+        rxStateStarted = now;
+      }
+    }
+
+    function registerLiveTone(duration) {
+      rxToneDurations.push(duration);
+      if (speedMode.value === 'auto' && duration > 25 && duration < 700) {
+        rxCalibrationSamples.push(duration);
+        if (rxCalibrationSamples.length > 20) rxCalibrationSamples.shift();
+
+        const sorted = [...rxCalibrationSamples].sort((a,b) => a-b);
+        rxUnit = sorted[Math.floor(sorted.length * 0.35)] || rxUnit;
+        rxUnit = Math.max(35, Math.min(500, rxUnit));
+      } else if (speedMode.value === 'manual') {
+        rxUnit = 1200 / Number(manualWpm.value);
+      }
+
+      const symbol = duration >= rxUnit * 2.0 ? '-' : '.';
+      rxCurrentCode += symbol;
+      rxCurrent.textContent = rxCurrentCode;
+      toneValue.textContent = Math.round(duration) + 'ms';
+      wpmValue.textContent = Math.round(1200 / rxUnit);
+      unitValue.textContent = Math.round(rxUnit);
+    }
+
+    function registerLiveGap(duration) {
+      const ratio = duration / rxUnit;
+      if (ratio >= 2.2 && ratio < 6) {
+        decodeLiveLetter();
+      } else if (ratio >= 6) {
+        decodeLiveLetter();
+        if (rxDecoded && !rxDecoded.endsWith(' ')) rxDecoded += ' ';
+        updateLiveMessage();
+      }
+    }
+
+    function decodeLiveLetter() {
+      if (!rxCurrentCode) return;
+      const letter = reverseMorse[rxCurrentCode];
+      if (letter) {
+        rxDecoded += letter;
+        confidenceValue.textContent = '100%';
+      } else {
+        rxDecoded += '?';
+        confidenceValue.textContent = '0%';
+      }
+      rxCurrentCode = '';
+      rxCurrent.textContent = '· · ·';
+      updateLiveMessage();
+    }
+
+    function updateLiveMessage() {
+      messageInput.value = rxDecoded;
+      rxMessage.textContent = rxDecoded || '🎙️ escuchando...';
+      statusBadge.textContent = rxDecoded ? `✅ RX: ${rxDecoded}` : '🎙️ escuchando Morse...';
+    }
+
+    function clearReceiver() {
+      rxDecoded = '';
+      rxCurrentCode = '';
+      rxToneDurations = [];
+      rxGapDurations = [];
+      rxCalibrationSamples = [];
+      messageInput.value = '';
+      rxMessage.textContent = 'El mensaje recibido aparecerá aquí...';
+      rxCurrent.textContent = '· · ·';
+      wpmValue.textContent = '—';
+      unitValue.textContent = '—';
+      toneValue.textContent = '—';
+      confidenceValue.textContent = '—';
+      statusBadge.textContent = '🧹 RX limpio';
+      canvasCtx.clearRect(0, 0, waveformCanvas.width, waveformCanvas.height);
+      signalMeterFill.style.width = '0%';
+      signalText.textContent = 'señal 0%';
+    }
+
+    function resetRXConfig() {
+      thresholdRange.value = '18';
+      filterSelect.value = 'medium';
+      speedMode.value = 'auto';
+      manualWpm.value = '12';
+      manualWpmValue.textContent = '12';
+      manualWpmWrap.style.display = 'none';
+      rxUnit = 100;
+      rxNoiseFloor = 0;
+      rxCalibrationSamples = [];
+      wpmValue.textContent = '—';
+      unitValue.textContent = '—';
+      toneValue.textContent = '—';
+      confidenceValue.textContent = '—';
+      statusBadge.textContent = '🔄 configuración restablecida';
+    }
+
+    function showColorModal(target) {
+      colorGrid.innerHTML = '';
+      basicColors.forEach(color => {
+        const swatch = document.createElement('div');
+        swatch.className = 'color-swatch';
+        swatch.style.background = color;
+        if (color === '#FFFFFF') swatch.style.border = '2px solid #ccc';
+        swatch.addEventListener('click', () => {
+          if (target === 'bg') document.body.style.backgroundColor = color;
+          else if (target === 'fg') document.body.style.color = color;
+          colorModal.classList.remove('show');
+        });
+        colorGrid.appendChild(swatch);
+      });
+      colorModal.dataset.target = target;
+      colorModal.classList.add('show');
+    }
+
+    function playAudio() {
+      if (receivedAudioBuffer) {
+        playBuffer(receivedAudioBuffer);
+        analyzeAudioBuffer(receivedAudioBuffer, true);
+        return;
+      }
+      if (audioBuffer) {
+        playBuffer(audioBuffer);
+        return;
+      }
+      const msg = messageInput.value.trim();
+      if (!msg) { statusBadge.textContent = 'no hay audio'; return; }
+      generateMorseAudio(msg, (buffer) => {
+        if (buffer) {
+          audioBuffer = buffer;
+          playBuffer(buffer);
+        }
+      });
+    }
+
+    function saveAudio() {
+      if (!audioBuffer) {
+        const msg = messageInput.value.trim();
+        if (!msg) { statusBadge.textContent = 'escribe mensaje'; return; }
+        generateMorseAudio(msg, (buffer) => {
+          if (buffer) {
+            audioBuffer = buffer;
+            downloadBuffer(buffer);
+          }
+        });
+      } else {
+        downloadBuffer(audioBuffer);
+      }
+    }
+
+    function downloadBuffer(buffer) {
+      const wav = bufferToWav(buffer);
+      const blob = new Blob([wav], { type: 'audio/wav' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `morse_${Date.now()}.wav`;
+      a.click();
+      URL.revokeObjectURL(url);
+      statusBadge.textContent = '💾 guardado';
+    }
+
+    function bufferToWav(buffer) {
+      const numChannels = 1;
+      const sampleRate = buffer.sampleRate;
+      const data = buffer.getChannelData(0);
+      const bits = 16;
+      const samples = data.length;
+      const dataLength = samples * (bits / 8);
+      const totalLength = 44 + dataLength;
+
+      const view = new DataView(new ArrayBuffer(totalLength));
+      const writeString = (offset, str) => {
+        for (let i = 0; i < str.length; i++) view.setUint8(offset + i, str.charCodeAt(i));
+      };
+      writeString(0, 'RIFF');
+      view.setUint32(4, 36 + dataLength, true);
+      writeString(8, 'WAVE');
+      writeString(12, 'fmt ');
+      view.setUint32(16, 16, true);
+      view.setUint16(20, 1, true);
+      view.setUint16(22, numChannels, true);
+      view.setUint32(24, sampleRate, true);
+      view.setUint32(28, sampleRate * numChannels * (bits / 8), true);
+      view.setUint16(32, numChannels * (bits / 8), true);
+      view.setUint16(34, bits, true);
+      writeString(36, 'data');
+      view.setUint32(40, dataLength, true);
+
+      let offset = 44;
+      for (let i = 0; i < samples; i++) {
+        const sample = Math.max(-1, Math.min(1, data[i]));
+        const int16 = sample < 0 ? sample * 0x8000 : sample * 0x7FFF;
+        view.setInt16(offset, Math.round(int16), true);
+        offset += 2;
+      }
+      return view.buffer;
+    }
+
+    // Event Listeners
+    sendAutoBtn.addEventListener('click', () => { if (manualModeActive) exitManualMode(); startAutoMode(); });
+    sendManualBtn.addEventListener('click', () => { if (manualModeActive) exitManualMode(); else startManualMode(); });
+    playBtn.addEventListener('click', playAudio);
+    stopBtn.addEventListener('click', stopAudio);
+    saveBtn.addEventListener('click', saveAudio);
+
+    receiveBtn.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', (e) => {
+      if (e.target.files.length) receiveAudio(e.target.files[0]);
+      fileInput.value = '';
+    });
+
+    micBtn.addEventListener('click', startMicrophoneReceiver);
+    liveStopBtn.addEventListener('click', stopMicrophoneReceiver);
+    clearRxBtn.addEventListener('click', clearReceiver);
+    resetConfigBtn.addEventListener('click', resetRXConfig);
+    selfTestBtn.addEventListener('click', () => {
+      generateMorseAudio('TE AMO', buffer => {
+        audioBuffer = buffer;
+        analyzeAudioBuffer(buffer, true);
+      });
+    });
+
+    bgConfigBtn.addEventListener('click', () => showColorModal('bg'));
+    fgConfigBtn.addEventListener('click', () => showColorModal('fg'));
+    closeColorModal.addEventListener('click', () => colorModal.classList.remove('show'));
+    colorModal.addEventListener('click', (e) => { if (e.target === colorModal) colorModal.classList.remove('show'); });
+    customColorBtn.addEventListener('click', () => {
+      const target = colorModal.dataset.target;
+      const color = prompt('Ingresa un color (hex, rgb, nombre):', target === 'bg' ? '#f5f3f0' : '#1e1e2a');
+      if (color) {
+        if (target === 'bg') document.body.style.backgroundColor = color;
+        else document.body.style.color = color;
+      }
+      colorModal.classList.remove('show');
+    });
+
+    speedMode.addEventListener('change', () => {
+      manualWpmWrap.style.display = speedMode.value === 'manual' ? 'inline-flex' : 'none';
+      if (speedMode.value === 'manual') {
+        rxUnit = 1200 / Number(manualWpm.value);
+        unitValue.textContent = Math.round(rxUnit);
+        wpmValue.textContent = Number(manualWpm.value);
+      }
+    });
+
+    manualWpm.addEventListener('input', () => {
+      manualWpmValue.textContent = manualWpm.value;
+      if (speedMode.value === 'manual') {
+        rxUnit = 1200 / Number(manualWpm.value);
+        unitValue.textContent = Math.round(rxUnit);
+        wpmValue.textContent = Number(manualWpm.value);
+      }
+    });
+
+    thresholdRange.addEventListener('input', () => { statusBadge.textContent = `umbral ${thresholdRange.value}%`; });
+
+    dotBtn.addEventListener('click', () => addSymbol('.'));
+    dashBtn.addEventListener('click', () => addSymbol('-'));
+    completeLetterBtn.addEventListener('click', completeLetter);
+    resetLetterBtn.addEventListener('click', resetCurrentLetter);
+    clearMessageBtn.addEventListener('click', clearAllMessages);
+
+    themeToggle.addEventListener('click', () => {
+      isDark = !isDark;
+      document.body.classList.toggle('dark', isDark);
+      themeToggle.textContent = isDark ? '☀️ claro' : '🌓 oscuro';
+    });
+
+    messageInput.addEventListener('input', () => {
+      if (!manualModeActive && !autoModeActive) statusBadge.textContent = '✏️ editando';
+    });
+
+  })();
+</script>
+</body>
+</html>
